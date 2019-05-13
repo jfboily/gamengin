@@ -10,27 +10,22 @@ import com.jfboily.gamengin.engine.GameNginScreen
 
 
 
-object ActivityHolder {
-    var gameNginActivity: GameNginActivity? = null
-
-    fun getContext(): Context {
-        return gameNginActivity!!
-    }
-}
-
 abstract class GameNginActivity : AppCompatActivity() {
 
     var screen: GameNginScreen? = null
-    val renderer = GameNginRenderer(this, false)
-    val logic = GameNginLogic(this)
+    var renderer: GameNginRenderer? = null
+    var logic: GameNginLogic? = null
+
+    val gameWidth = 1024
+    val gameHeight = 552
 
     abstract fun startScreen(): GameNginScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // set as global "main" activity
-        ActivityHolder.gameNginActivity = this
+        renderer = GameNginRenderer(this, gameWidth, gameHeight, true)
+        logic = GameNginLogic(this)
 
         // Fullscreen and no sleep
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE or
@@ -47,5 +42,10 @@ abstract class GameNginActivity : AppCompatActivity() {
         screen = startScreen()
 
         setContentView(renderer)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        renderer?.resume()
     }
 }

@@ -4,12 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
-import com.example.gamengin.engine.ActivityHolder
-import java.io.InputStream
+import com.example.gamengin.engine.GameNginActivity
 
-abstract class GameNginScreen {
+abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
 
     private val sprites = mutableListOf<Sprite>()
+    private val bitmaps = mutableMapOf<String, Bitmap>()
 
     fun render(canvas: Canvas) {
 
@@ -18,7 +18,7 @@ abstract class GameNginScreen {
 
         // draw all sprites
         sprites.map {
-            it.animateAndDraw(canvas)
+            it.animateAndDraw(canvas, 16)
         }
 
         // TODO : add mote stuff here:
@@ -27,15 +27,30 @@ abstract class GameNginScreen {
         // * User drawing : additional drawing over sprites
     }
 
-    companion object {
-        val bitmaps = mutableMapOf<String, Bitmap>()
 
-        fun loadBitmap(filename: String): Bitmap {
-            if(!bitmaps.containsKey(filename)) {
-                return BitmapFactory.decodeStream(ActivityHolder.getContext().openFileInput(filename))
-            }
-
-            return bitmaps[filename]!!
+    /**
+     * Sprites functions
+     */
+    fun loadBitmap(filename: String): Bitmap {
+        // check if bitmap is already loaded
+        val bitmap: Bitmap
+        if(bitmaps[filename] != null) {
+            bitmap = bitmaps[filename]!!
+        } else {
+            val inputStream = gameNginActivity.applicationContext.assets.open(filename)
+            bitmap = BitmapFactory.decodeStream(inputStream)
+            bitmaps[filename] = bitmap
         }
+
+        return bitmap
     }
+
+    fun createSprite(filename: String, frameW: Int = 0, frameH: Int = 0, refPixel: RefPixel): Sprite {
+        val s = Sprite(loadBitmap(filename), frameW, frameH, refPixel)
+        sprites.add(s)
+        return s
+    }
+
+
+
 }

@@ -6,5 +6,5 @@ import com.jfboily.gamengin.game.MainScreen
 class GameActivity : GameNginActivity() {
 
     // must specify a start screen
-    override fun startScreen() = MainScreen()
+    override fun startScreen() = MainScreen(this)
 }

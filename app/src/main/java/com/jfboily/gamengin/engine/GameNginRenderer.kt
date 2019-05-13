@@ -1,15 +1,19 @@
 package com.jfboily.gamengin.engine
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.WindowManager
 import com.example.gamengin.engine.GameNginActivity
+import kotlin.concurrent.thread
 
-class GameNginRenderer(val gameNginActivity: GameNginActivity, autoscale: Boolean) : SurfaceView(gameNginActivity), Runnable {
+class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: Int, val gameHeight: Int, val autoscale: Boolean) : SurfaceView(gameNginActivity) {
 
     // timing variables
     private var startTime = 0L
@@ -19,21 +23,37 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, autoscale: Boolea
 
     // thread management
     private var isRunning = false
-    private val renderThread: Thread? = null
+    private var renderThread: Thread? = null
 
     // drawing stuff
     private val surfaceHolder = getHolder()
-    private val backBuffer = Bitmap.createBitmap(800, 600, Bitmap.Config.ARGB_8888)
+    private val backBuffer = Bitmap.createBitmap(gameWidth, gameHeight, Bitmap.Config.ARGB_8888)
     private val backCanvas = Canvas(backBuffer)
     private val backPaint = Paint()
     private val backBufferX = 0.0f
     private val backBufferY = 0.0f
+    private var scaleH: Float = 0.0f
+    private var scaleV: Float = 0.0f
 
     // game stuff
     private var screen: GameNginScreen? = null
 
+    init {
+    }
 
-    override fun run() {
+    fun initScale() {
+        var metrics = DisplayMetrics()
+        val windowManager =  gameNginActivity.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager.defaultDisplay.getMetrics(metrics)
+
+        val deviceWidth = metrics.widthPixels
+        val deviceHeight = metrics.heightPixels
+
+        scaleH = deviceWidth.toFloat() / gameWidth.toFloat()
+        scaleV = deviceHeight.toFloat() / gameHeight.toFloat()
+    }
+
+    fun run() {
         var canvas: Canvas
         var sleepTime: Long
 
@@ -42,6 +62,8 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, autoscale: Boolea
         endTime = startTime
         deltaTime = 1
         fpsTime = startTime
+
+        initScale()
 
         // "infinite" loop
         while(isRunning) {
@@ -57,6 +79,10 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, autoscale: Boolea
 
                 // first, lock the canvas
                 canvas = surfaceHolder.lockCanvas()
+
+                if(autoscale) {
+                    canvas.scale(scaleH, scaleV)
+                }
 
                 // fill with magenta (helps with debugging)
                 canvas.drawColor(Color.MAGENTA)
@@ -79,6 +105,13 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, autoscale: Boolea
 
             // ZzzzZzzzz
             Thread.sleep(sleepTime)
+        }
+    }
+
+    fun resume() {
+        isRunning = true
+        thread(true) {
+            this.run()
         }
     }
 }
