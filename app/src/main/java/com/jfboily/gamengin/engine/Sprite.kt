@@ -24,10 +24,10 @@ class Sprite(val bitmap: Bitmap, val width: Int = 0, val height: Int = 0, refPix
     val frames = mutableListOf<Rect>()
     var currentFrame: Rect
     var currentAnimFrame = 0
-    var isAnimRunning = true
-    var isAnimLoop = true
+    var animRunning = true
+    var animLoop = true
     val anims = mutableListOf<List<Int>>()
-    val animDelay = 16
+    val animDelay = 33
     var animTime = 0L
     val angle = 0.0f
     val alpha = 255
@@ -36,6 +36,8 @@ class Sprite(val bitmap: Bitmap, val width: Int = 0, val height: Int = 0, refPix
     var dstRect = Rect()
     val refX: Int
     val refY: Int
+    var visible = true
+    var flipHoriz = false
 
     init {
         // animation frames
@@ -53,9 +55,9 @@ class Sprite(val bitmap: Bitmap, val width: Int = 0, val height: Int = 0, refPix
         }
 
         // default animation (index 0) ==> all frames
-        anims.add(0, (0 until nbFrames).toList())
+        createAnim((0 until nbFrames).toList())
 
-        currentFrame = frames[anims[0][0]]
+        currentFrame = frames[0]
 
         // destination rectangle (on canvas)
         refX = when (refPixel) {
@@ -90,10 +92,11 @@ class Sprite(val bitmap: Bitmap, val width: Int = 0, val height: Int = 0, refPix
 
 
     fun animateAndDraw(canvas: Canvas, deltaTime: Long) {
+        // visible?
+        if (!visible) return
 
         // update animation?
-
-        if (isAnimRunning) {
+        if (animRunning) {
             animTime += deltaTime
 
             val nbFramesElapsed = (animTime) / animDelay
@@ -101,11 +104,11 @@ class Sprite(val bitmap: Bitmap, val width: Int = 0, val height: Int = 0, refPix
             for (i in 0 until nbFramesElapsed) {
                 currentAnimFrame++
                 if (currentAnimFrame >= anims[currentAnim].size) {
-                    if (isAnimLoop) {
+                    if (animLoop) {
                         currentAnimFrame = 0
                     } else {
-                        currentAnimFrame = anims[currentAnim].last()
-                        isAnimRunning = false
+                        currentAnimFrame = anims[currentAnim].lastIndex
+                        animRunning = false
                     }
                 }
             }
@@ -121,12 +124,36 @@ class Sprite(val bitmap: Bitmap, val width: Int = 0, val height: Int = 0, refPix
         canvas.rotate(angle, x.toFloat(), y.toFloat())
         // ... and alpha!
         paint.alpha = alpha
+        // ... and flip?
+        if(flipHoriz) {
+            canvas.scale(-1.0f, 1.0f, x.toFloat(), y.toFloat())
+        }
+
+
         dstRect.left = x - refX
         dstRect.top = y - refY
         dstRect.right = dstRect.left + width
         dstRect.bottom = dstRect.top + height
+
         canvas.drawBitmap(bitmap, currentFrame, dstRect, paint)
         canvas.restore()
+    }
+
+    fun createAnim(frames: List<Int>): Int {
+        val nbAnims = anims.size
+        anims.add(nbAnims, frames)
+
+        // return the index
+        return nbAnims
+    }
+
+    fun playAnim(animIndex: Int, loop: Boolean = false) {
+        if(animIndex < anims.size) {
+            currentAnim = animIndex
+            animRunning = true
+            animLoop = loop
+            currentAnimFrame = 0
+        }
     }
 
 }

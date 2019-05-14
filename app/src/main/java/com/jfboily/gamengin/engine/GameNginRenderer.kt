@@ -5,9 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.provider.Settings
 import android.util.DisplayMetrics
-import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.WindowManager
 import com.example.gamengin.engine.GameNginActivity
@@ -19,14 +17,15 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
     private var startTime = 0L
     private var endTime = 0L
     private var deltaTime = 0L
-    private var fpsTime = 0L
+    private val targetSleepTime = 33
+    var fps = 0L
 
     // thread management
-    private var isRunning = false
+    private var running = false
     private var renderThread: Thread? = null
 
     // drawing stuff
-    private val surfaceHolder = getHolder()
+    private val surfaceHolder = holder
     private val backBuffer = Bitmap.createBitmap(gameWidth, gameHeight, Bitmap.Config.ARGB_8888)
     private val backCanvas = Canvas(backBuffer)
     private val backPaint = Paint()
@@ -47,7 +46,7 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
         windowManager.defaultDisplay.getMetrics(metrics)
 
         val deviceWidth = metrics.widthPixels
-        val deviceHeight = metrics.heightPixels
+        val deviceHeight = metrics.heightPixels + 48
 
         scaleH = deviceWidth.toFloat() / gameWidth.toFloat()
         scaleV = deviceHeight.toFloat() / gameHeight.toFloat()
@@ -61,12 +60,11 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
         startTime = System.currentTimeMillis()
         endTime = startTime
         deltaTime = 1
-        fpsTime = startTime
 
         initScale()
 
         // "infinite" loop
-        while(isRunning) {
+        while(running) {
             startTime = System.currentTimeMillis()
             screen = gameNginActivity.screen
 
@@ -98,10 +96,12 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
             deltaTime = endTime - startTime
 
             // compute how long with must sleep to keep a steady framerate
-            sleepTime =  if (deltaTime < 16) 16 - deltaTime else 0
+            sleepTime =  if (deltaTime < targetSleepTime) targetSleepTime - deltaTime else 0
 
             // adjust deltaTime to account for sleep
             deltaTime += sleepTime
+
+            fps = 1000 / deltaTime
 
             // ZzzzZzzzz
             Thread.sleep(sleepTime)
@@ -109,9 +109,13 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
     }
 
     fun resume() {
-        isRunning = true
-        thread(true) {
+        running = true
+        thread(start = true) {
             this.run()
         }
+    }
+
+    fun pause() {
+        running = false
     }
 }

@@ -10,21 +10,32 @@ abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
 
     private val sprites = mutableListOf<Sprite>()
     private val bitmaps = mutableMapOf<String, Bitmap>()
+    private val gameObjects = mutableListOf<GameNginObject>()
+    private var time: Long = 0L
+    private var background: Bitmap? = null
+    protected val input: GameNginInput
+
+    init {
+        input = gameNginActivity.input!!
+    }
 
     fun render(canvas: Canvas) {
 
-        // black background
-        canvas.drawColor(Color.BLACK)
+        if(background != null) {
+            // draw background bitmap
+            canvas.drawBitmap(background, 0f, 0f,null)
+        }
+        else {
+            // black background
+            canvas.drawColor(Color.BLACK)
+        }
 
         // draw all sprites
         sprites.map {
             it.animateAndDraw(canvas, 16)
         }
 
-        // TODO : add mote stuff here:
-        // * debug drawing : draw debugging infos, like fps
-        // * UI drawing : HUB and buttons etc
-        // * User drawing : additional drawing over sprites
+        draw(canvas)
     }
 
 
@@ -45,12 +56,36 @@ abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
         return bitmap
     }
 
+    fun setBackground(filename: String) {
+        background = loadBitmap(filename)
+    }
+
+
     fun createSprite(filename: String, frameW: Int = 0, frameH: Int = 0, refPixel: RefPixel): Sprite {
         val s = Sprite(loadBitmap(filename), frameW, frameH, refPixel)
         sprites.add(s)
         return s
     }
 
+    fun registerGameObject(gameNginObject: GameNginObject) {
+        this.gameObjects.add(gameNginObject)
+        gameNginObject.init(this)
+    }
 
+    fun logicUpdate(deltaTime: Long) {
+        // update time
+        time += deltaTime
 
+        // update gameobjects
+        gameObjects.map {
+            it.internalUpdate(deltaTime)
+        }
+
+        // game logic
+        update(deltaTime)
+    }
+
+    abstract fun update(deltaTime: Long)
+
+    abstract fun draw(canvas: Canvas)
 }

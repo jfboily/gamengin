@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.jfboily.gamengin.engine.GameNginInput
 import com.jfboily.gamengin.engine.GameNginLogic
 import com.jfboily.gamengin.engine.GameNginRenderer
 import com.jfboily.gamengin.engine.GameNginScreen
@@ -15,17 +16,16 @@ abstract class GameNginActivity : AppCompatActivity() {
     var screen: GameNginScreen? = null
     var renderer: GameNginRenderer? = null
     var logic: GameNginLogic? = null
-
-    val gameWidth = 1024
-    val gameHeight = 552
+    var input: GameNginInput? = null
 
     abstract fun startScreen(): GameNginScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        renderer = GameNginRenderer(this, gameWidth, gameHeight, true)
+        renderer = GameNginRenderer(this, GAME_WIDTH, GAME_HEIGHT, true)
         logic = GameNginLogic(this)
+        input = GameNginInput()
 
         // Fullscreen and no sleep
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE or
@@ -41,11 +41,26 @@ abstract class GameNginActivity : AppCompatActivity() {
         // set starting screen
         screen = startScreen()
 
+        // set Input callback
+        renderer?.setOnTouchListener(input)
+
         setContentView(renderer)
     }
 
     override fun onResume() {
         super.onResume()
         renderer?.resume()
+        logic?.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        renderer?.pause()
+        logic?.pause()
+    }
+
+    companion object {
+        var GAME_WIDTH = 800
+        var GAME_HEIGHT = 600
     }
 }

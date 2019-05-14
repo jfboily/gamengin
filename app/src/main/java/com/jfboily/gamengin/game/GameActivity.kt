@@ -7,4 +7,9 @@ class GameActivity : GameNginActivity() {
 
     // must specify a start screen
     override fun startScreen() = MainScreen(this)
+
+    init {
+        GAME_HEIGHT = 480
+        GAME_WIDTH = 640
+    }
 }
