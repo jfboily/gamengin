@@ -9,7 +9,7 @@ class GameNginLogic(val gameNginActivity: GameNginActivity) {
     private var screen: GameNginScreen? = null
 
     fun run() {
-        var startTime = System.currentTimeMillis()
+        var startTime: Long
         var endTime: Long
         var deltaTime = 1L
 
@@ -20,6 +20,9 @@ class GameNginLogic(val gameNginActivity: GameNginActivity) {
 
             screen = gameNginActivity.screen
 
+            // check for collisions
+            checkCollisions(screen?.getGameObjects())
+
             // update Screen objects
             screen?.logicUpdate(deltaTime)
 
@@ -27,6 +30,20 @@ class GameNginLogic(val gameNginActivity: GameNginActivity) {
 
             endTime = System.currentTimeMillis()
             deltaTime = endTime - startTime
+        }
+    }
+
+    fun checkCollisions(objects: List<GameNginObject>?) {
+        if(objects == null) return
+
+        for (o in objects) {
+            for(o2 in objects) {
+                if(o != o2) {
+                    if(o.collidesWith(o2)) {
+                        o.onCollision(o2)
+                    }
+                }
+            }
         }
     }
 

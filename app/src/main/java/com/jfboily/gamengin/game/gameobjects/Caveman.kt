@@ -1,16 +1,24 @@
 package com.jfboily.gamengin.game.gameobjects
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import com.example.gamengin.R
 import com.jfboily.gamengin.engine.GameNginObject
 import com.jfboily.gamengin.engine.GameNginScreen
 import com.jfboily.gamengin.engine.RefPixel
 
 class Caveman : GameNginObject() {
 
-    var target: GameNginObject? = null;
+    var target: Destination? = null;
+    var screen: GameNginScreen? = null
+    val paint = Paint()
 
     override fun init(screen: GameNginScreen) {
         x = 320.0f
         y = 200.0f
+
+        this.screen = screen
 
         sprite = screen.createSprite("caveman.png", 32, 32, RefPixel.CENTER)
 
@@ -37,11 +45,14 @@ class Caveman : GameNginObject() {
 
                 if(target != null) {
                     // arrived
-                    val refTarget: GameNginObject = target!!
+                    val refTarget: Destination = target!!
 
-                    if(distance2(refTarget) < 20) {
+                    if(distance2(refTarget as GameNginObject) < 20) {
                         state = STATE_IDLE
-                        target = null
+                        refTarget.active = false
+
+                        // play sfx
+                        screen?.audio?.playSound(R.raw.towerup)
                         return
                     }
 
@@ -66,10 +77,17 @@ class Caveman : GameNginObject() {
         }
     }
 
-    fun setDestination(target: GameNginObject) {
+    fun setDestination(target: Destination) {
         this.target = target
         state = STATE_RUNNING
     }
+
+    override fun draw(canvas: Canvas) {
+        paint.color = Color.YELLOW
+        paint.style = Paint.Style.STROKE
+        canvas.drawRect(sprite?.dstRect, paint)
+    }
+
 
     companion object {
         var ANIM_IDLE: Int = 0

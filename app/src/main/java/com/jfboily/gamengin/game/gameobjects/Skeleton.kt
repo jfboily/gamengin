@@ -1,11 +1,16 @@
 package com.jfboily.gamengin.game.gameobjects
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import com.example.gamengin.engine.GameNginActivity
 import com.jfboily.gamengin.engine.GameNginObject
 import com.jfboily.gamengin.engine.GameNginScreen
 import com.jfboily.gamengin.engine.RefPixel
 
 class Skeleton : GameNginObject() {
+
+    val paint = Paint()
 
     override fun init(screen: GameNginScreen) {
         sprite = screen.createSprite("skeleton_idle.png", 24, 32, RefPixel.CENTER)
@@ -37,5 +42,16 @@ class Skeleton : GameNginObject() {
             y = 0.0f
             speedY = -speedY
         }
+    }
+
+    override fun onCollision(other: GameNginObject) {
+        speedX = -speedX
+        speedY = -speedY
+    }
+
+    override fun draw(canvas: Canvas) {
+        paint.color = Color.RED
+        paint.style = Paint.Style.STROKE
+        canvas.drawRect(sprite?.dstRect, paint)
     }
 }

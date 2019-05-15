@@ -4,11 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.jfboily.gamengin.engine.GameNginInput
-import com.jfboily.gamengin.engine.GameNginLogic
-import com.jfboily.gamengin.engine.GameNginRenderer
-import com.jfboily.gamengin.engine.GameNginScreen
-
+import com.jfboily.gamengin.engine.*
 
 
 abstract class GameNginActivity : AppCompatActivity() {
@@ -17,6 +13,7 @@ abstract class GameNginActivity : AppCompatActivity() {
     var renderer: GameNginRenderer? = null
     var logic: GameNginLogic? = null
     var input: GameNginInput? = null
+    var audio: GameNginAudio? = null
 
     abstract fun startScreen(): GameNginScreen
 
@@ -26,6 +23,7 @@ abstract class GameNginActivity : AppCompatActivity() {
         renderer = GameNginRenderer(this, GAME_WIDTH, GAME_HEIGHT, true)
         logic = GameNginLogic(this)
         input = GameNginInput()
+        audio = GameNginAudio(this)
 
         // Fullscreen and no sleep
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE or

@@ -13,10 +13,12 @@ abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
     private val gameObjects = mutableListOf<GameNginObject>()
     private var time: Long = 0L
     private var background: Bitmap? = null
-    protected val input: GameNginInput
+    val input: GameNginInput
+    val audio: GameNginAudio
 
     init {
         input = gameNginActivity.input!!
+        audio = gameNginActivity.audio!!
     }
 
     fun render(canvas: Canvas) {
@@ -33,6 +35,11 @@ abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
         // draw all sprites
         sprites.map {
             it.animateAndDraw(canvas, 16)
+        }
+
+        // custom draw all game objects
+        gameObjects.forEach {
+            it.draw(canvas)
         }
 
         draw(canvas)
@@ -84,6 +91,8 @@ abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
         // game logic
         update(deltaTime)
     }
+
+    fun getGameObjects() = gameObjects
 
     abstract fun update(deltaTime: Long)
 

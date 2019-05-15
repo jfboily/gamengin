@@ -1,5 +1,8 @@
 package com.jfboily.gamengin.engine
 
+import android.graphics.Canvas
+import android.graphics.Rect
+
 abstract class GameNginObject {
     var state = 0
         set(value) {
@@ -35,11 +38,23 @@ abstract class GameNginObject {
     }
 
     fun distance2(other: GameNginObject): Float {
-        return  ((x - other.x) * (x - other.x)) - ((y - other.y) * (y - other.y))
+        return  ((x - other.x) * (x - other.x)) + ((y - other.y) * (y - other.y))
     }
 
     fun collidesWith(other: GameNginObject): Boolean {
-        return distance2(other) < 10
+        if (sprite != null && other.sprite != null) {
+            return Rect.intersects(sprite?.dstRect, other?.sprite?.dstRect)
+        } else {
+            return distance2(other) < 256
+        }
+    }
+
+    open fun onCollision(other: GameNginObject) {
+
+    }
+
+    open fun draw(canvas: Canvas) {
+
     }
 
     abstract fun logicUpdate(deltaTime: Long)
