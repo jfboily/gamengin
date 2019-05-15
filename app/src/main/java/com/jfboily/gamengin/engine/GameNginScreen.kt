@@ -23,7 +23,7 @@ abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
 
         if(background != null) {
             // draw background bitmap
-            canvas.drawBitmap(background, 0f, 0f,null)
+            canvas.drawBitmap(background!!, 0f, 0f,null)
         }
         else {
             // black background

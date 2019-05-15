@@ -17,7 +17,7 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
     private var startTime = 0L
     private var endTime = 0L
     private var deltaTime = 0L
-    private val targetSleepTime = 33
+    private val targetSleepTime = 66
     var fps = 0L
 
     // thread management

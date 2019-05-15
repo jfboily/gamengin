@@ -24,14 +24,12 @@ class GameNginInput : View.OnTouchListener {
         touchY = event?.y?.toInt()?:0
 
         if(event != null && v != null) {
-            if(event.x != null) {
-                val ratioX = event.x / v.width
-                touchX = (GameNginActivity.GAME_WIDTH * ratioX).toInt()
-            }
-            if(event.y != null) {
-                val ratioY = event.y / v.height
-                touchY = (GameNginActivity.GAME_HEIGHT * ratioY).toInt()
-            }
+
+            val ratioX = event.x / v.width
+            touchX = (GameNginActivity.GAME_WIDTH * ratioX).toInt()
+
+            val ratioY = event.y / v.height
+            touchY = (GameNginActivity.GAME_HEIGHT * ratioY).toInt()
         }
 
         when (event?.action) {

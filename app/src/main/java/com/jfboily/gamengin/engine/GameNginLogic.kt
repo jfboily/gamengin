@@ -10,7 +10,7 @@ class GameNginLogic(val gameNginActivity: GameNginActivity) {
 
     fun run() {
         var startTime = System.currentTimeMillis()
-        var endTime = startTime
+        var endTime: Long
         var deltaTime = 1L
 
         while(running) {
