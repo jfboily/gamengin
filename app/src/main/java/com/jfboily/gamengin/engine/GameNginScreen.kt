@@ -17,8 +17,8 @@ abstract class GameNginScreen(val gameNginActivity: GameNginActivity) {
     val audio: GameNginAudio
 
     init {
-        input = gameNginActivity.input!!
-        audio = gameNginActivity.audio!!
+        input = gameNginActivity.input
+        audio = gameNginActivity.audio
     }
 
     fun render(canvas: Canvas) {

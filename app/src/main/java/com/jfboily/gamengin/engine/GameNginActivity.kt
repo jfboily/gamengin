@@ -9,11 +9,11 @@ import com.jfboily.gamengin.engine.*
 
 abstract class GameNginActivity : AppCompatActivity() {
 
-    var screen: GameNginScreen? = null
-    var renderer: GameNginRenderer? = null
-    var logic: GameNginLogic? = null
-    var input: GameNginInput? = null
-    var audio: GameNginAudio? = null
+    lateinit var screen: GameNginScreen
+    lateinit var renderer: GameNginRenderer
+    lateinit var logic: GameNginLogic
+    lateinit var input: GameNginInput
+    lateinit var audio: GameNginAudio
 
     abstract fun startScreen(): GameNginScreen
 
@@ -40,21 +40,21 @@ abstract class GameNginActivity : AppCompatActivity() {
         screen = startScreen()
 
         // set Input callback
-        renderer?.setOnTouchListener(input)
+        renderer.setOnTouchListener(input)
 
         setContentView(renderer)
     }
 
     override fun onResume() {
         super.onResume()
-        renderer?.resume()
-        logic?.resume()
+        renderer.resume()
+        logic.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        renderer?.pause()
-        logic?.pause()
+        renderer.pause()
+        logic.pause()
     }
 
     companion object {

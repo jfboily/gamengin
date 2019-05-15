@@ -52,6 +52,6 @@ class Skeleton : GameNginObject() {
     override fun draw(canvas: Canvas) {
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
-        canvas.drawRect(sprite?.dstRect, paint)
+        canvas.drawRect(sprite!!.dstRect, paint)
     }
 }

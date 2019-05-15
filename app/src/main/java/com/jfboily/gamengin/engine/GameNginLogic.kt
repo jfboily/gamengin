@@ -6,7 +6,7 @@ import kotlin.concurrent.thread
 class GameNginLogic(val gameNginActivity: GameNginActivity) {
 
     private var running = false;
-    private var screen: GameNginScreen? = null
+    private lateinit var screen: GameNginScreen
 
     fun run() {
         var startTime: Long
@@ -21,10 +21,10 @@ class GameNginLogic(val gameNginActivity: GameNginActivity) {
             screen = gameNginActivity.screen
 
             // check for collisions
-            checkCollisions(screen?.getGameObjects())
+            checkCollisions(screen.getGameObjects())
 
             // update Screen objects
-            screen?.logicUpdate(deltaTime)
+            screen.logicUpdate(deltaTime)
 
             Thread.sleep(4)
 

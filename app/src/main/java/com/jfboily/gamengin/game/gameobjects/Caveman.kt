@@ -11,7 +11,7 @@ import com.jfboily.gamengin.engine.RefPixel
 class Caveman : GameNginObject() {
 
     var target: Destination? = null;
-    var screen: GameNginScreen? = null
+    lateinit var screen: GameNginScreen
     val paint = Paint()
 
     override fun init(screen: GameNginScreen) {
@@ -22,9 +22,9 @@ class Caveman : GameNginObject() {
 
         sprite = screen.createSprite("caveman.png", 32, 32, RefPixel.CENTER)
 
-        val refSprite = sprite!!
+        val refSprite = sprite
 
-        ANIM_IDLE = refSprite.createAnim(listOf(14))
+        ANIM_IDLE = refSprite!!.createAnim(listOf(14))
         refSprite.playAnim(ANIM_IDLE)
     }
 
@@ -52,7 +52,7 @@ class Caveman : GameNginObject() {
                         refTarget.active = false
 
                         // play sfx
-                        screen?.audio?.playSound(R.raw.towerup)
+                        screen.audio.playSound(R.raw.towerup)
                         return
                     }
 
@@ -85,7 +85,7 @@ class Caveman : GameNginObject() {
     override fun draw(canvas: Canvas) {
         paint.color = Color.YELLOW
         paint.style = Paint.Style.STROKE
-        canvas.drawRect(sprite?.dstRect, paint)
+        canvas.drawRect(sprite!!.dstRect, paint)
     }
 
 

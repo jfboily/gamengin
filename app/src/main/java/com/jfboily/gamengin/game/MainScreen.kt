@@ -46,6 +46,6 @@ class MainScreen(gameNginActivity: GameNginActivity) : GameNginScreen(gameNginAc
     }
 
     override fun draw(canvas: Canvas) {
-        canvas.drawText("FPS : ${gameNginActivity.renderer?.fps}", 500.0f, 10.0f, debugPaint)
+        canvas.drawText("FPS : ${gameNginActivity.renderer.fps}", 500.0f, 10.0f, debugPaint)
     }
 }

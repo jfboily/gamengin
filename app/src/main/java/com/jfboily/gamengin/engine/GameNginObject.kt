@@ -23,12 +23,8 @@ abstract class GameNginObject {
         x += (speedX * deltaTime / 1000L)
         y += (speedY * deltaTime / 1000L)
 
-        var spriteRef = this.sprite
-
-        if (spriteRef != null) {
-            spriteRef.x = x.toInt()
-            spriteRef.y = y.toInt()
-        }
+        sprite?.x = x.toInt()
+        sprite?.y = y.toInt()
 
         // call user specified update
         logicUpdate(deltaTime)
@@ -43,8 +39,9 @@ abstract class GameNginObject {
 
     fun collidesWith(other: GameNginObject): Boolean {
         if (sprite != null && other.sprite != null) {
-            return Rect.intersects(sprite?.dstRect, other?.sprite?.dstRect)
+            return Rect.intersects(sprite?.dstRect, other.sprite?.dstRect)
         } else {
+            // TODO modify to use radius of gameobjects
             return distance2(other) < 256
         }
     }

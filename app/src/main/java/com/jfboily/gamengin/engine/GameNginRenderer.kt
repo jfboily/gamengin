@@ -22,7 +22,6 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
 
     // thread management
     private var running = false
-    private var renderThread: Thread? = null
 
     // drawing stuff
     private val surfaceHolder = holder
@@ -35,7 +34,7 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
     private var scaleV: Float = 0.0f
 
     // game stuff
-    private var screen: GameNginScreen? = null
+    private lateinit var screen: GameNginScreen
 
     init {
     }
@@ -71,7 +70,7 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
             // must check for validity of Surface
             if(surfaceHolder.surface.isValid) {
                 // render GameNginScreen (Sprites, etc) to the Back Buffer
-                screen?.render(backCanvas)
+                screen.render(backCanvas)
 
                 // render Back Buffer to main canvas
 
@@ -117,5 +116,9 @@ class GameNginRenderer(val gameNginActivity: GameNginActivity, val gameWidth: In
 
     fun pause() {
         running = false
+    }
+
+    override fun performClick(): Boolean {
+        return super.performClick()
     }
 }
